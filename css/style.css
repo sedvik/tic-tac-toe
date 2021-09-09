@@ -1,0 +1,45 @@
+/* General Styles */
+html {
+    font-size: 16px;
+}
+
+body {
+    background-color: skyblue;
+}
+
+/* Header Styles */
+header {
+    width: 100%;
+}
+
+h1 {
+    color: black;
+    width: 100%;
+    text-align: center;
+    font-size: 4rem;
+    padding: 1rem;
+}
+
+/* Main Styles */
+#board-container {
+    display: grid;
+    width: 932px;
+    margin: 0 auto;
+    grid-template-columns: repeat(3, 300px);
+    grid-template-rows: repeat(3, 300px);
+    gap: 1rem;
+    background-color: grey;
+}
+
+.board-space {
+    font-size: 7rem;
+    background-color: beige;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 300px;
+    user-select: none;
+}
+
+.board-space:hover {
+    border: 2px solid red;
+}
