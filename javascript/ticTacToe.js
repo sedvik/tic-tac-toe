@@ -19,12 +19,57 @@ const gameBoard = (function() {
         ];
         displayController.render(_state);
     }
+
+    // hasWinner function - checks if the symbol has won on the gameboard 
+    function hasWinner(symbol) {
+        // Top row
+        if (_state[0][0] === symbol && _state[0][1] === symbol && _state[0][2] === symbol) {
+            return true;
+        }
+        // Middle row
+        else if (_state[1][0] === symbol && _state[1][1] === symbol && _state[1][2] === symbol) {
+            return true;
+        }
+        // Bottom row
+        else if (_state[2][0] === symbol && _state[2][1] === symbol && _state[2][2] === symbol) {
+            return true;
+        }
+        // First col
+        else if (_state[0][0] === symbol && _state[1][0] === symbol && _state[2][0] === symbol) {
+            return true;
+        }
+        // Second col
+        else if (_state[0][1] === symbol && _state[1][1] === symbol && _state[2][1] === symbol) {
+            return true;
+        }
+        // Third Col
+        else if (_state[0][2] === symbol && _state[1][2] === symbol && _state[2][2] === symbol) {
+            return true;
+        }
+        // Top left to Bottom right
+        else if (_state[0][0] === symbol && _state[1][1] === symbol && _state[2][2] === symbol) {
+            return true;
+        }
+        // Bottom left to top right
+        else if (_state[2][0] === symbol && _state[1][1] === symbol && _state[0][2] === symbol) {
+            return true;
+        }
+        // No winning combinations found
+        else {
+            return false;
+        }
+    }
     
+    // addSymbol function - adds symbol to the board, calls render, checks if there is a winner, and switches the active player
     function addSymbol(symbol, row, col) {
         _state[row][col] = symbol;
         displayController.render(_state);
+        if (hasWinner(symbol)) {
+            gameDriver.completeGame();
+        }
         gameDriver.switchPlayer();
     }
+
     // isEmpty function - Returns true if a specified game space is empty
     function isEmpty(row, col) {
         return _state[row][col] === '';
@@ -82,6 +127,7 @@ const events = (function() {
         const activePlayer = gameDriver.getActivePlayer();
         activePlayer.play(row, col);
     }
+
     // assignEvents function - add events listeners to DOM elements
     function assignEvents() {
         const boardSpaces = document.querySelectorAll('.board-space');
@@ -89,6 +135,7 @@ const events = (function() {
             boardSpace.addEventListener('click', handleSpaceClick);
         });
     }
+
     return {
         assignEvents
     };
@@ -132,10 +179,17 @@ const gameDriver = (function() {
         return _activePlayer;
     }
 
+    // game completion logic
+    function completeGame() {
+        // Unbind event listeners from board spaces
+
+    }
+
     return {
         init,
         getActivePlayer,
-        switchPlayer
+        switchPlayer,
+        completeGame
     };
 })();
 
@@ -143,17 +197,21 @@ const gameDriver = (function() {
 const playerFactory = function(name, symbol) {
     const _name = name;
     const _symbol = symbol;
+
     function getName() {
         return _name;
     }
+
     function getSymbol() {
         return _symbol;
     }
+
     function play(row, col) {
         if (gameBoard.isEmpty(row, col)) {
             gameBoard.addSymbol(_symbol, row, col);
         }
     }
+
     return {
         getName,
         getSymbol,
