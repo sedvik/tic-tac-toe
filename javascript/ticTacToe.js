@@ -6,24 +6,34 @@ const gameBoard = (function() {
         ['O', 'O', 'X'],
         ['X', 'O', 'X']
     ];
+    
     function getState() {
         return _state;
     }
+    
     function resetState() {
         _state = [
             ['', '', ''],
             ['', '', ''],
             ['', '', '']
         ];
+        displayController.render(_state);
     }
+    
     function addSymbol(symbol, row, col) {
-
+        _state[row][col] = symbol;
+        displayController.render(_state);
+    }
+    // isEmpty function - Returns true if a specified game space is empty
+    function isEmpty(row, col) {
+        return _state[row][col] === '';
     }
 
     return {
         getState,
         resetState,
-        addSymbol
+        addSymbol,
+        isEmpty
     };
 })();
 
@@ -46,7 +56,13 @@ const displayController = (function() {
     }
     
     function render(gameState) {
-        // Loop through gameState array and populate DOM elements with appropriate symbol
+        // Populate DOM elements with symbols from gameState array
+        const boardSpaces = document.querySelectorAll('.board-space');
+        boardSpaces.forEach(boardSpace => {
+            const row = boardSpace.getAttribute('data-row');
+            const col = boardSpace.getAttribute('data-col');
+            boardSpace.textContent = gameState[row][col];
+        });
     }
 
     return {
@@ -55,9 +71,12 @@ const displayController = (function() {
     };
 })();
 
+// gameEvents instead potentially???
 // gameDriver module - controls the flow of the game
 const gameDriver = (function() {
+    function init() {
 
+    }
     return {
 
     };
@@ -73,14 +92,19 @@ const playerFactory = function(name, symbol) {
     function getSymbol() {
         return _symbol;
     }
-    function play() {
-
+    function play(row, col) {
+        if (gameBoard.isEmpty(row, col)) {
+            gameBoard.addSymbol(_symbol, row, col);
+        }
     }
     return {
         getName,
-        getSymbol
+        getSymbol,
+        play
     };
 }
 
 // TEST CALLS
 displayController.init(gameBoard.getState());
+const player1 = playerFactory('Skyler', 'X');
+const player2 = playerFactory('Lauren', 'O');
