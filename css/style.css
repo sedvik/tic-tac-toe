@@ -21,25 +21,65 @@ h1 {
 }
 
 /* Main Styles */
+
+/* Player info form container */
+#player-info-container {
+    width: 40%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: center;
+}
+
+input[type="text"] {
+    width: 200px;
+}
+
+.bold {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.player-form {
+    line-height: 1.5;
+}
+
+/* Tic Tac Toe Board */
 #board-container {
     display: grid;
-    width: 932px;
-    margin: 0 auto;
-    grid-template-columns: repeat(3, 300px);
-    grid-template-rows: repeat(3, 300px);
+    width: 632px;
+    margin: 1rem auto;
+    grid-template-columns: repeat(3, 200px);
+    grid-template-rows: repeat(3, 200px);
     gap: 1rem;
     background-color: grey;
 }
 
 .board-space {
-    font-size: 7rem;
+    font-size: 5rem;
     background-color: beige;
     text-align: center;
     vertical-align: middle;
-    line-height: 300px;
+    line-height: 200px;
     user-select: none;
 }
 
 .board-space:hover {
     border: 2px solid red;
+}
+
+/* Bottom buttons */
+#btn-container {
+    width: 100%;
+}
+
+#start {
+    display: block;
+    margin: 0 auto;
 }

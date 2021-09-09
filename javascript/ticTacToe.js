@@ -111,9 +111,14 @@ const displayController = (function() {
         });
     }
 
+    function displayWinner(winnerName) {
+        alert(`${winnerName} won!`);
+    }
+
     return {
         init,
-        render
+        render,
+        displayWinner
     };
 })();
 
@@ -136,8 +141,17 @@ const events = (function() {
         });
     }
 
+    // removeEvents function - removes applicable event listeners from DOM after game completion
+    function removeEvents() {
+        const boardSpaces = document.querySelectorAll('.board-space');
+        boardSpaces.forEach(boardSpace => {
+            boardSpace.removeEventListener('click', handleSpaceClick);
+        });
+    }
+
     return {
-        assignEvents
+        assignEvents,
+        removeEvents
     };
 })();
 
@@ -179,10 +193,13 @@ const gameDriver = (function() {
         return _activePlayer;
     }
 
-    // game completion logic
+    // completeGame function - game completion logic
     function completeGame() {
         // Unbind event listeners from board spaces
+        events.removeEvents();
 
+        // Display the winner
+        displayController.displayWinner(_activePlayer.getName());
     }
 
     return {
