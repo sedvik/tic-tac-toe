@@ -2,9 +2,9 @@
 const gameBoard = (function() {
     // state array - contains game board state
     let _state = [
-        ['X', 'X', 'O'],
-        ['O', 'O', 'X'],
-        ['X', 'O', 'X']
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
     ];
     
     function getState() {
@@ -23,6 +23,7 @@ const gameBoard = (function() {
     function addSymbol(symbol, row, col) {
         _state[row][col] = symbol;
         displayController.render(_state);
+        gameDriver.switchPlayer();
     }
     // isEmpty function - Returns true if a specified game space is empty
     function isEmpty(row, col) {
@@ -37,7 +38,7 @@ const gameBoard = (function() {
     };
 })();
 
-// displayController module - contains DOM manipulation logic
+// displayController module - contains  DOM manipulation logic
 const displayController = (function() {
     // init function - sets up initial game board html
     function init(gameState) {
@@ -71,14 +72,70 @@ const displayController = (function() {
     };
 })();
 
-// gameEvents instead potentially???
-// gameDriver module - controls the flow of the game
-const gameDriver = (function() {
-    function init() {
-
+// events module - contains page event handlers
+const events = (function() {
+    // handleSpaceClick function - causes the activePlayer to play at the selected space
+    function handleSpaceClick(e) {
+        const boardSpace = e.target;
+        const row = parseInt(boardSpace.getAttribute('data-row'));
+        const col = parseInt(boardSpace.getAttribute('data-col'));
+        const activePlayer = gameDriver.getActivePlayer();
+        activePlayer.play(row, col);
+    }
+    // assignEvents function - add events listeners to DOM elements
+    function assignEvents() {
+        const boardSpaces = document.querySelectorAll('.board-space');
+        boardSpaces.forEach(boardSpace => {
+            boardSpace.addEventListener('click', handleSpaceClick);
+        });
     }
     return {
+        assignEvents
+    };
+})();
 
+// gameDriver module - contains logic related to the flow of the game
+const gameDriver = (function() {
+    const _players = {};
+    let _activePlayer;
+    
+    // switchPlayer function - Swaps the active player
+    function switchPlayer() {
+        if (_players.player1.getSymbol() === _activePlayer.getSymbol()) {
+            _activePlayer = _players.player2;
+        } else {
+            _activePlayer = _players.player1;
+        }
+    }
+    
+    // init function - game initialization logic
+    function init() {
+        // Create player objects
+        _players.player1 = playerFactory('Skyler', 'X');
+        _players.player2 = playerFactory('Lauren', 'O');
+
+        // Assign an initial active player based on the player that has symbol 'X'
+        if (_players.player1.getSymbol() === 'X') {
+            _activePlayer = _players.player1;
+        } else {
+            _activePlayer = _players.player2;
+        }
+
+        // Initialize game board
+        displayController.init(gameBoard.getState());
+
+        // Assign event listeners to DOM
+        events.assignEvents();
+    }
+
+    function getActivePlayer() {
+        return _activePlayer;
+    }
+
+    return {
+        init,
+        getActivePlayer,
+        switchPlayer
     };
 })();
 
@@ -105,6 +162,4 @@ const playerFactory = function(name, symbol) {
 }
 
 // TEST CALLS
-displayController.init(gameBoard.getState());
-const player1 = playerFactory('Skyler', 'X');
-const player2 = playerFactory('Lauren', 'O');
+gameDriver.init();
