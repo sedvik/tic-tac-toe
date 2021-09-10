@@ -129,14 +129,16 @@ const displayController = (function() {
 
     // changeButtonText function - Switches the button text from "Start" to "Reset"
     function changeButtonText() {
-
+        const button = document.querySelector('#start-reset');
+        button.textContent = 'Reset';
     }
 
     return {
         init,
         render,
         displayOutcome,
-        changeButtonText
+        changeButtonText,
+        displayPlayerInfo
     };
 })();
 
@@ -188,8 +190,8 @@ const events = (function() {
     }
 
     // handleResetClick function - resets the game
-    function handlResetClick(e) {
-
+    function handleResetClick() {
+        game.reset();
     }
 
     // assignBoardEvents function - add events listeners to boardSpace DOM elements
@@ -225,8 +227,11 @@ const events = (function() {
     // assignResetButtonEvent function - removes previous start button event listener and assigns the reset button event listener
     function assignResetButtonEvent() {
         // Remove existing start button event listener
-
+        const button = document.querySelector('#start-reset');
+        button.removeEventListener('click', handleStartClick);
+    
         // Add reset button event listener
+        button.addEventListener('click', handleResetClick);
     }
 
     // assignInitial function - Wrapper function for initial page load event assignment
@@ -247,9 +252,6 @@ const events = (function() {
     }
 
     return {
-        assignBoardEvents, // CLEAN THIS UP AFTER FINISHING MODULE
-        removeBoardEvents,
-        assignRadioEvents,
         assignInitial,
         assignGameStart,
         assignGameEnd
@@ -293,7 +295,27 @@ const game = (function() {
 
     // start function - game start logic
     function start() {
-        // Make calls to change button text and change event listeners
+        // Change start button to reset button
+        events.assignGameStart();
+        displayController.changeButtonText();
+
+        // Display player info
+        displayController.displayPlayerInfo(_players);
+    }
+
+    // reset function - resets game state and starts the game again
+    function reset() {
+        // reset the number of turns
+        _numTurns = 0;
+        
+        // reset the gameBoard state
+        gameBoard.resetState();
+
+        // Display empty text in the outcome field
+        displayController.displayOutcome('');
+
+        // Call start method
+        game.start();
     }
 
     // getOutcome function - returns text representing the outcome of the game
@@ -329,7 +351,7 @@ const game = (function() {
     // complete function - game completion logic
     function complete() {
         // Unbind event listeners from board spaces
-        events.removeBoardEvents();
+        events.assignGameEnd();
 
         // Display the game outcome
         const outcome = getOutcome();
@@ -344,7 +366,8 @@ const game = (function() {
         addTurn,
         switchPlayer,
         getPlayers,
-        complete
+        complete,
+        reset
     };
 })();
 
