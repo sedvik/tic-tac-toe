@@ -140,16 +140,16 @@ const events = (function() {
         activePlayer.play(row, col);
     }
 
-    // assignEvents function - add events listeners to DOM elements
-    function assignEvents() {
+    // assignBoardEvents function - add events listeners to boardSpace DOM elements
+    function assignBoardEvents() {
         const boardSpaces = document.querySelectorAll('.board-space');
         boardSpaces.forEach(boardSpace => {
             boardSpace.addEventListener('click', handleSpaceClick);
         });
     }
 
-    // removeEvents function - removes applicable event listeners from DOM after game completion
-    function removeEvents() {
+    // removeBoardEvents function - removes boardSpace event listeners from DOM after game completion
+    function removeBoardEvents() {
         const boardSpaces = document.querySelectorAll('.board-space');
         boardSpaces.forEach(boardSpace => {
             boardSpace.removeEventListener('click', handleSpaceClick);
@@ -157,8 +157,8 @@ const events = (function() {
     }
 
     return {
-        assignEvents,
-        removeEvents
+        assignBoardEvents,
+        removeBoardEvents
     };
 })();
 
@@ -194,7 +194,7 @@ const game = (function() {
         displayController.init(gameBoard.getState());
 
         // Assign event listeners to DOM
-        events.assignEvents();
+        events.assignBoardEvents();
     }
 
     // getOutcome function - returns text representing the outcome of the game
@@ -226,7 +226,7 @@ const game = (function() {
     // complete function - game completion logic
     function complete() {
         // Unbind event listeners from board spaces
-        events.removeEvents();
+        events.removeBoardEvents();
 
         // Display the game outcome
         const outcome = getOutcome();
