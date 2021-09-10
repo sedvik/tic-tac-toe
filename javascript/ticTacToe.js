@@ -147,9 +147,43 @@ const displayController = (function() {
         playerInfoContainer.textContent = '';
     }
 
+    // createPlayerInfoDiv function - creates a div that displays a player's information
+    function createPlayerInfoDiv(player, playerNum) {
+        const playerInfoDiv = document.createElement('div');
+        playerInfoDiv.classList.add('player-info');
+
+        const h2 = document.createElement('h2');
+        h2.textContent = `Player ${playerNum}`;
+
+        const nameH3 = document.createElement('h3');
+        nameH3.textContent = 'Name';
+
+        const nameP = document.createElement('p');
+        nameP.classList.add('player-name');
+        nameP.textContent = `${player.getName()}`;
+
+        const symbolH3 = document.createElement('h3');
+        symbolH3.textContent = 'Symbol';
+
+        const symbolP = document.createElement('p');
+        symbolP.classList.add('player-symbol');
+        symbolP.textContent = `${player.getSymbol()}`;
+
+        const childElements = [h2, nameH3, nameP, symbolH3, symbolP];
+        childElements.forEach(child => {
+            playerInfoDiv.appendChild(child);
+        });
+
+        return playerInfoDiv;
+    }
+    
     // Replaces player form input with a display with accepted player information
     function displayPlayerInfo(players) {
-
+        const player1InfoDiv = createPlayerInfoDiv(players.player1, 1);
+        const player2InfoDiv = createPlayerInfoDiv(players.player2, 2);
+        const playerInfoContainer = document.querySelector('#player-info-container');
+        playerInfoContainer.appendChild(player1InfoDiv);
+        playerInfoContainer.appendChild(player2InfoDiv);
     }
 
     // changeButtonText function - Switches the button text from "Start" to "Reset"

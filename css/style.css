@@ -48,6 +48,26 @@ input[type="text"] {
 
 .player-form {
     line-height: 1.5;
+    width: 40%;
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.player-info {
+    line-height: 1.5;
+    width: 40%;
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 1rem;
+    text-align: center;
+}
+
+
+h3 {
+    font-size: 1.1rem;
+    font-weight: bold;
 }
 
 /* Tic Tac Toe Board */
