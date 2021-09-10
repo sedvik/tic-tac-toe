@@ -20,9 +20,9 @@ const gameBoard = (function() {
         displayController.render(_state);
     }
 
-    // isDone function - checks if the symbol has won on the gameboard 
+    // isDone function - checks if the symbol has a winning combination on the game board and whether numTurns is >= 9, meaning the board is full
     function isDone(symbol, numTurns) {
-        // If numTurns is >= 9, it's a tie and the game is done
+        // Check if all possible turns have been played
         if (numTurns >= 9) {
             return true;
         }
@@ -67,13 +67,13 @@ const gameBoard = (function() {
     // addSymbol function - adds symbol to the board, adds a turn, calls render, checks if the game is done, and switches the active player
     function addSymbol(symbol, row, col) {
         _state[row][col] = symbol;
-        gameDriver.addTurn();
-        const numTurns = gameDriver.getNumTurns();
+        game.addTurn();
+        const numTurns = game.getNumTurns();
         displayController.render(_state);
         if (isDone(symbol, numTurns)) {
-            gameDriver.completeGame();
+            game.completeGame();
         }
-        gameDriver.switchPlayer();
+        game.switchPlayer();
     }
 
     // isEmpty function - Returns true if a specified game space is empty
@@ -135,7 +135,7 @@ const events = (function() {
         const boardSpace = e.target;
         const row = parseInt(boardSpace.getAttribute('data-row'));
         const col = parseInt(boardSpace.getAttribute('data-col'));
-        const activePlayer = gameDriver.getActivePlayer();
+        const activePlayer = game.getActivePlayer();
         activePlayer.play(row, col);
     }
 
@@ -161,8 +161,8 @@ const events = (function() {
     };
 })();
 
-// gameDriver module - contains logic related to the flow of the game
-const gameDriver = (function() {
+// game module - contains logic related to the flow of the game
+const game = (function() {
     const _players = {};
     let _activePlayer;
     let _numTurns = 0;
@@ -254,4 +254,4 @@ const playerFactory = function(name, symbol) {
 }
 
 // TEST CALLS
-gameDriver.init();
+game.init();
