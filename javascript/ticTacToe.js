@@ -71,7 +71,7 @@ const gameBoard = (function() {
         const numTurns = game.getNumTurns();
         displayController.render(_state);
         if (isDone(symbol, numTurns)) {
-            game.completeGame();
+            game.complete();
         }
         game.switchPlayer();
     }
@@ -208,8 +208,8 @@ const game = (function() {
         _numTurns += 1;
     }
 
-    // completeGame function - game completion logic
-    function completeGame() {
+    // complete function - game completion logic
+    function complete() {
         // Unbind event listeners from board spaces
         events.removeEvents();
 
@@ -223,7 +223,7 @@ const game = (function() {
         getNumTurns,
         addTurn,
         switchPlayer,
-        completeGame
+        complete
     };
 })();
 
