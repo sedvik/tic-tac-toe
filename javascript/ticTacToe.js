@@ -118,7 +118,8 @@ const displayController = (function() {
     }
 
     function displayOutcome(outcome) {
-        alert(`${outcome}`);
+        const outcomeDiv = document.querySelector('#outcome-display');
+        outcomeDiv.textContent = outcome;
     }
 
     return {
