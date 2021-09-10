@@ -71,7 +71,7 @@ const gameBoard = (function() {
         const numTurns = game.getNumTurns();
         displayController.render(_state);
         if (isDone(symbol, numTurns)) {
-            game.complete();
+            return game.complete();
         }
         game.switchPlayer();
     }
@@ -122,10 +122,21 @@ const displayController = (function() {
         outcomeDiv.textContent = outcome;
     }
 
+    // Replaces player form input with a display with accepted player information
+    function displayPlayerInfo(players) {
+
+    }
+
+    // changeButtonText function - Switches the button text from "Start" to "Reset"
+    function changeButtonText() {
+
+    }
+
     return {
         init,
         render,
-        displayOutcome
+        displayOutcome,
+        changeButtonText
     };
 })();
 
@@ -138,6 +149,47 @@ const events = (function() {
         const col = parseInt(boardSpace.getAttribute('data-col'));
         const activePlayer = game.getActivePlayer();
         activePlayer.play(row, col);
+    }
+
+    // handleRadioClick function - Automatically switches the symbol radio button for the other player on change
+    function handleRadioClick(e) {
+        const clickedRadioId = e.target.id;
+        // Determine the id of opposite radio button that must be selected
+        let opponentRadioId;
+        if (clickedRadioId === 'p1-symbol-x') {
+            opponentRadioId = 'p2-symbol-o';
+        } else if (clickedRadioId === 'p1-symbol-o') {
+            opponentRadioId = 'p2-symbol-x';
+        } else if (clickedRadioId === 'p2-symbol-x') {
+            opponentRadioId = 'p1-symbol-o';
+        } else {
+            opponentRadioId = 'p1-symbol-x';
+        }
+        const opponentRadio = document.querySelector(`#${opponentRadioId}`);
+        opponentRadio.click();
+    }
+
+    // handleStartClick function - Starts the game after checking that required inputs were filled in
+    function handleStartClick() {
+        // Check that player1 and player2 name and symbols were input
+        const playerNameInputs = Array.from(document.querySelectorAll('input[type="text"]'));
+        const validNameInputs = playerNameInputs.every(input => {
+            return input.value !== '';
+        });
+        const playerSymbolInputs = Array.from(document.querySelectorAll('input[type="radio"]'));
+        const validSymbolInputs = playerSymbolInputs.some(input => {
+            return input.checked;
+        });
+        if (validNameInputs && validSymbolInputs) {
+            game.start();
+        } else {
+            alert('Please ensure that all Player 1 and Player 2 fields are filled out');
+        }
+    }
+
+    // handleResetClick function - resets the game
+    function handlResetClick(e) {
+
     }
 
     // assignBoardEvents function - add events listeners to boardSpace DOM elements
@@ -156,9 +208,51 @@ const events = (function() {
         });
     }
 
+    // assignRadioEvents function - assigns event listeners to the player form radio buttons
+    function assignRadioEvents() {
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+        radioButtons.forEach(button => {
+            button.addEventListener('click', handleRadioClick);
+        });
+    }
+
+    // assignStartButtonEvent function - assigns start button event listener
+    function assignStartButtonEvent() {
+        const startButton = document.querySelector('#start-reset');
+        startButton.addEventListener('click', handleStartClick);
+    }
+
+    // assignResetButtonEvent function - removes previous start button event listener and assigns the reset button event listener
+    function assignResetButtonEvent() {
+        // Remove existing start button event listener
+
+        // Add reset button event listener
+    }
+
+    // assignInitial function - Wrapper function for initial page load event assignment
+    function assignInitial() {
+        assignRadioEvents();
+        assignStartButtonEvent();
+    }
+
+    // assignGameStart function - Wrapper function for game start event assignment
+    function assignGameStart() {
+        assignBoardEvents();
+        assignResetButtonEvent();
+    }
+
+    // assignEnd function - Wrapper function for game end event assignment
+    function assignGameEnd() {
+        removeBoardEvents();
+    }
+
     return {
-        assignBoardEvents,
-        removeBoardEvents
+        assignBoardEvents, // CLEAN THIS UP AFTER FINISHING MODULE
+        removeBoardEvents,
+        assignRadioEvents,
+        assignInitial,
+        assignGameStart,
+        assignGameEnd
     };
 })();
 
@@ -177,7 +271,7 @@ const game = (function() {
         }
     }
     
-    // init function - game initialization logic
+    // init function - game initialization logic at page load
     function init() {
         // Create player objects
         _players.player1 = playerFactory('Skyler', 'X');
@@ -193,8 +287,13 @@ const game = (function() {
         // Initialize game board
         displayController.init(gameBoard.getState());
 
-        // Assign event listeners to DOM
-        events.assignBoardEvents();
+        // Assign initial event listeners to DOM
+        events.assignInitial();
+    }
+
+    // start function - game start logic
+    function start() {
+        // Make calls to change button text and change event listeners
     }
 
     // getOutcome function - returns text representing the outcome of the game
@@ -223,6 +322,10 @@ const game = (function() {
         _numTurns += 1;
     }
 
+    function getPlayers() {
+        return _players;
+    }
+
     // complete function - game completion logic
     function complete() {
         // Unbind event listeners from board spaces
@@ -235,10 +338,12 @@ const game = (function() {
 
     return {
         init,
+        start,
         getActivePlayer,
         getNumTurns,
         addTurn,
         switchPlayer,
+        getPlayers,
         complete
     };
 })();
@@ -269,5 +374,4 @@ const playerFactory = function(name, symbol) {
     };
 }
 
-// TEST CALLS
 game.init();
