@@ -20,8 +20,12 @@ const gameBoard = (function() {
         displayController.render(_state);
     }
 
-    // hasWinner function - checks if the symbol has won on the gameboard 
-    function hasWinner(symbol) {
+    // isDone function - checks if the symbol has won on the gameboard 
+    function isDone(symbol, numTurns) {
+        // If numTurns is >= 9, it's a tie and the game is done
+        if (numTurns >= 9) {
+            return true;
+        }
         // Top row
         if (_state[0][0] === symbol && _state[0][1] === symbol && _state[0][2] === symbol) {
             return true;
@@ -60,11 +64,13 @@ const gameBoard = (function() {
         }
     }
     
-    // addSymbol function - adds symbol to the board, calls render, checks if there is a winner, and switches the active player
+    // addSymbol function - adds symbol to the board, adds a turn, calls render, checks if the game is done, and switches the active player
     function addSymbol(symbol, row, col) {
         _state[row][col] = symbol;
+        gameDriver.addTurn();
+        const numTurns = gameDriver.getNumTurns();
         displayController.render(_state);
-        if (hasWinner(symbol)) {
+        if (isDone(symbol, numTurns)) {
             gameDriver.completeGame();
         }
         gameDriver.switchPlayer();
@@ -159,6 +165,7 @@ const events = (function() {
 const gameDriver = (function() {
     const _players = {};
     let _activePlayer;
+    let _numTurns = 0;
     
     // switchPlayer function - Swaps the active player
     function switchPlayer() {
@@ -193,18 +200,28 @@ const gameDriver = (function() {
         return _activePlayer;
     }
 
+    function getNumTurns() {
+        return _numTurns;
+    }
+
+    function addTurn() {
+        _numTurns += 1;
+    }
+
     // completeGame function - game completion logic
     function completeGame() {
         // Unbind event listeners from board spaces
         events.removeEvents();
 
-        // Display the winner
-        displayController.displayWinner(_activePlayer.getName());
+        // Display the winner, if applicable
+        displayController.displayWinner(_activePlayer.getName()); // MAY NEED TO CHANGE THIS SINCE THERE WON'T ALWAYS BE A WINNER
     }
 
     return {
         init,
         getActivePlayer,
+        getNumTurns,
+        addTurn,
         switchPlayer,
         completeGame
     };
