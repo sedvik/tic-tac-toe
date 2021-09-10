@@ -59,6 +59,7 @@ input[type="text"] {
     grid-template-rows: repeat(3, 200px);
     gap: 1rem;
     background-color: grey;
+    display: none;
 }
 
 .board-space {

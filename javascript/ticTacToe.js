@@ -122,6 +122,12 @@ const displayController = (function() {
         outcomeDiv.textContent = outcome;
     }
 
+    // removePlayerForm function - Clears player-info-container div
+    function removePlayerForm() {
+        const playerInfoContainer = document.querySelector('#player-info-container');
+        playerInfoContainer.textContent = '';
+    }
+
     // Replaces player form input with a display with accepted player information
     function displayPlayerInfo(players) {
 
@@ -133,12 +139,20 @@ const displayController = (function() {
         button.textContent = 'Reset';
     }
 
+    // showBoard function - toggles the visibility of the game board
+    function showBoard() {
+        const board = document.querySelector('#board-container');
+        board.style.display = 'grid';
+    }
+
     return {
         init,
         render,
         displayOutcome,
         changeButtonText,
-        displayPlayerInfo
+        removePlayerForm,
+        displayPlayerInfo,
+        showBoard
     };
 })();
 
@@ -275,18 +289,7 @@ const game = (function() {
     
     // init function - game initialization logic at page load
     function init() {
-        // Create player objects
-        _players.player1 = playerFactory('Skyler', 'X');
-        _players.player2 = playerFactory('Lauren', 'O');
-
-        // Assign an initial active player based on the player that has symbol 'X'
-        if (_players.player1.getSymbol() === 'X') {
-            _activePlayer = _players.player1;
-        } else {
-            _activePlayer = _players.player2;
-        }
-
-        // Initialize game board
+        // Initialize game board html
         displayController.init(gameBoard.getState());
 
         // Assign initial event listeners to DOM
@@ -295,12 +298,33 @@ const game = (function() {
 
     // start function - game start logic
     function start() {
+        // Create players from form information if they don't already exist
+        if (_players.player1 === undefined || _players.player2 === undefined) {
+            const player1Name = document.querySelector('#p1-name').value;
+            const player2Name = document.querySelector('#p2-name').value;
+            const player1Symbol = document.querySelector('input[name="p1-symbol"]:checked').value;
+            const player2Symbol = document.querySelector('input[name="p2-symbol"]:checked').value;
+            _players.player1 = playerFactory(player1Name, player1Symbol);
+            _players.player2 = playerFactory(player2Name, player2Symbol);
+        }
+
+        // Assign an initial active player based on the player that has symbol 'X'
+        if (_players.player1.getSymbol() === 'X') {
+            _activePlayer = _players.player1;
+        } else {
+            _activePlayer = _players.player2;
+        }
+
         // Change start button to reset button
         events.assignGameStart();
         displayController.changeButtonText();
 
-        // Display player info
+        // Hide form info and display input player info
+        displayController.removePlayerForm();
         displayController.displayPlayerInfo(_players);
+
+        // Show the board
+        displayController.showBoard();
     }
 
     // reset function - resets game state and starts the game again
