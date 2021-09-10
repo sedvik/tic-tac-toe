@@ -117,14 +117,14 @@ const displayController = (function() {
         });
     }
 
-    function displayWinner(winnerName) {
-        alert(`${winnerName} won!`);
+    function displayOutcome(outcome) {
+        alert(`${outcome}`);
     }
 
     return {
         init,
         render,
-        displayWinner
+        displayOutcome
     };
 })();
 
@@ -196,6 +196,20 @@ const game = (function() {
         events.assignEvents();
     }
 
+    // getOutcome function - returns text representing the outcome of the game
+    function getOutcome() {
+        let outcome;
+        // Tie game if _numTurns is 9
+        if (_numTurns === 9) {
+            outcome = "It's a tie!";
+        }
+        // Otherwise the current active player was the last to make a move and get a winning combination
+        else {
+            outcome = `${_activePlayer.getName()} won!`;
+        }
+        return outcome;
+    }
+
     function getActivePlayer() {
         return _activePlayer;
     }
@@ -213,8 +227,9 @@ const game = (function() {
         // Unbind event listeners from board spaces
         events.removeEvents();
 
-        // Display the winner, if applicable
-        displayController.displayWinner(_activePlayer.getName()); // MAY NEED TO CHANGE THIS SINCE THERE WON'T ALWAYS BE A WINNER
+        // Display the game outcome
+        const outcome = getOutcome();
+        displayController.displayOutcome(outcome);
     }
 
     return {
