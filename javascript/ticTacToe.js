@@ -21,47 +21,65 @@ const gameBoard = (function() {
     }
 
     // isDone function - checks if the symbol has a winning combination on the game board and whether numTurns is >= 9, meaning the board is full
+    // Returns an object in the format { gameFinished: BOOLEAN, hasWinner: BOOLEAN }
     function isDone(symbol, numTurns) {
-        // Check if all possible turns have been played
-        if (numTurns >= 9) {
-            return true;
-        }
+        let gameFinished;
+        let hasWinner;
         // Top row
         if (_state[0][0] === symbol && _state[0][1] === symbol && _state[0][2] === symbol) {
-            return true;
+            gameFinished = true;
+            hasWinner = true;
         }
         // Middle row
         else if (_state[1][0] === symbol && _state[1][1] === symbol && _state[1][2] === symbol) {
-            return true;
+            gameFinished = true;
+            hasWinner = true;
         }
         // Bottom row
         else if (_state[2][0] === symbol && _state[2][1] === symbol && _state[2][2] === symbol) {
-            return true;
+            gameFinished = true;
+            hasWinner = true;
         }
         // First col
         else if (_state[0][0] === symbol && _state[1][0] === symbol && _state[2][0] === symbol) {
-            return true;
+            gameFinished = true;
+            hasWinner = true;
         }
         // Second col
         else if (_state[0][1] === symbol && _state[1][1] === symbol && _state[2][1] === symbol) {
-            return true;
+            gameFinished = true;
+            hasWinner = true;
         }
         // Third Col
         else if (_state[0][2] === symbol && _state[1][2] === symbol && _state[2][2] === symbol) {
-            return true;
+            gameFinished = true;
+            hasWinner = true;
         }
         // Top left to Bottom right
         else if (_state[0][0] === symbol && _state[1][1] === symbol && _state[2][2] === symbol) {
-            return true;
+            gameFinished = true;
+            hasWinner = true;
         }
         // Bottom left to top right
         else if (_state[2][0] === symbol && _state[1][1] === symbol && _state[0][2] === symbol) {
-            return true;
+            gameFinished = true;
+            hasWinner = true;
+        }
+        // If none of the above win conditions were met and 9 turns have been played, the game is done
+        else if (numTurns >= 9) {
+            gameFinished = true;
+            hasWinner = false;
         }
         // No winning combinations found
         else {
-            return false;
+            gameFinished = false;
+            hasWinner = false;
         }
+
+        return {
+            gameFinished,
+            hasWinner
+        };
     }
     
     // addSymbol function - adds symbol to the board, adds a turn, calls render, checks if the game is done, and switches the active player
@@ -70,8 +88,9 @@ const gameBoard = (function() {
         game.addTurn();
         const numTurns = game.getNumTurns();
         displayController.render(_state);
-        if (isDone(symbol, numTurns)) {
-            return game.complete();
+        const { gameFinished, hasWinner } = isDone(symbol, numTurns);
+        if (gameFinished) {
+            return game.complete(hasWinner);
         }
         game.switchPlayer();
     }
@@ -343,13 +362,13 @@ const game = (function() {
     }
 
     // getOutcome function - returns text representing the outcome of the game
-    function getOutcome() {
+    function getOutcome(hasWinner) {
         let outcome;
-        // Tie game if _numTurns is 9
-        if (_numTurns === 9) {
+        // Tie game if winner is null
+        if (!hasWinner) {
             outcome = "It's a tie!";
         }
-        // Otherwise the current active player was the last to make a move and get a winning combination
+        // Otherwise, the current active player must have won since they went last
         else {
             outcome = `${_activePlayer.getName()} won!`;
         }
@@ -373,12 +392,12 @@ const game = (function() {
     }
 
     // complete function - game completion logic
-    function complete() {
+    function complete(hasWinner) {
         // Unbind event listeners from board spaces
         events.assignGameEnd();
 
         // Display the game outcome
-        const outcome = getOutcome();
+        const outcome = getOutcome(hasWinner);
         displayController.displayOutcome(outcome);
     }
 
