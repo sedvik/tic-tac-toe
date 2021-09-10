@@ -20,9 +20,9 @@ const gameBoard = (function() {
         displayController.render(_state);
     }
 
-    // isDone function - checks if the symbol has a winning combination on the game board and whether numTurns is >= 9, meaning the board is full
+    // _isDone function - checks if the symbol has a winning combination on the game board and whether numTurns is >= 9, meaning the board is full
     // Returns an object in the format { gameFinished: BOOLEAN, hasWinner: BOOLEAN }
-    function isDone(symbol, numTurns) {
+    function _isDone(symbol, numTurns) {
         let gameFinished;
         let hasWinner;
         // Top row
@@ -88,7 +88,7 @@ const gameBoard = (function() {
         game.addTurn();
         const numTurns = game.getNumTurns();
         displayController.render(_state);
-        const { gameFinished, hasWinner } = isDone(symbol, numTurns);
+        const { gameFinished, hasWinner } = _isDone(symbol, numTurns);
         if (gameFinished) {
             return game.complete(hasWinner);
         }
@@ -147,8 +147,8 @@ const displayController = (function() {
         playerInfoContainer.textContent = '';
     }
 
-    // createPlayerInfoDiv function - creates a div that displays a player's information
-    function createPlayerInfoDiv(player, playerNum) {
+    // _createPlayerInfoDiv function - creates a div that displays a player's information
+    function _createPlayerInfoDiv(player, playerNum) {
         const playerInfoDiv = document.createElement('div');
         playerInfoDiv.classList.add('player-info');
 
@@ -179,8 +179,8 @@ const displayController = (function() {
     
     // Replaces player form input with a display with accepted player information
     function displayPlayerInfo(players) {
-        const player1InfoDiv = createPlayerInfoDiv(players.player1, 1);
-        const player2InfoDiv = createPlayerInfoDiv(players.player2, 2);
+        const player1InfoDiv = _createPlayerInfoDiv(players.player1, 1);
+        const player2InfoDiv = _createPlayerInfoDiv(players.player2, 2);
         const playerInfoContainer = document.querySelector('#player-info-container');
         playerInfoContainer.appendChild(player1InfoDiv);
         playerInfoContainer.appendChild(player2InfoDiv);
@@ -211,8 +211,8 @@ const displayController = (function() {
 
 // events module - contains page event handlers
 const events = (function() {
-    // handleSpaceClick function - causes the activePlayer to play at the selected space
-    function handleSpaceClick(e) {
+    // _handleSpaceClick function - causes the activePlayer to play at the selected space
+    function _handleSpaceClick(e) {
         const boardSpace = e.target;
         const row = parseInt(boardSpace.getAttribute('data-row'));
         const col = parseInt(boardSpace.getAttribute('data-col'));
@@ -220,8 +220,8 @@ const events = (function() {
         activePlayer.play(row, col);
     }
 
-    // handleRadioClick function - Automatically switches the symbol radio button for the other player on change
-    function handleRadioClick(e) {
+    // _handleRadioClick function - Automatically switches the symbol radio button for the other player on change
+    function _handleRadioClick(e) {
         const clickedRadioId = e.target.id;
         // Determine the id of opposite radio button that must be selected
         let opponentRadioId;
@@ -238,8 +238,8 @@ const events = (function() {
         opponentRadio.click();
     }
 
-    // handleStartClick function - Starts the game after checking that required inputs were filled in
-    function handleStartClick() {
+    // _handleStartClick function - Starts the game after checking that required inputs were filled in
+    function _handleStartClick() {
         // Check that player1 and player2 name and symbols were input
         const playerNameInputs = Array.from(document.querySelectorAll('input[type="text"]'));
         const validNameInputs = playerNameInputs.every(input => {
@@ -256,66 +256,66 @@ const events = (function() {
         }
     }
 
-    // handleResetClick function - resets the game
-    function handleResetClick() {
+    // _handleResetClick function - resets the game
+    function _handleResetClick() {
         game.reset();
     }
 
-    // assignBoardEvents function - add events listeners to boardSpace DOM elements
-    function assignBoardEvents() {
+    // _assignBoardEvents function - add events listeners to boardSpace DOM elements
+    function _assignBoardEvents() {
         const boardSpaces = document.querySelectorAll('.board-space');
         boardSpaces.forEach(boardSpace => {
-            boardSpace.addEventListener('click', handleSpaceClick);
+            boardSpace.addEventListener('click', _handleSpaceClick);
         });
     }
 
-    // removeBoardEvents function - removes boardSpace event listeners from DOM after game completion
-    function removeBoardEvents() {
+    // _removeBoardEvents function - removes boardSpace event listeners from DOM after game completion
+    function _removeBoardEvents() {
         const boardSpaces = document.querySelectorAll('.board-space');
         boardSpaces.forEach(boardSpace => {
-            boardSpace.removeEventListener('click', handleSpaceClick);
+            boardSpace.removeEventListener('click', _handleSpaceClick);
         });
     }
 
-    // assignRadioEvents function - assigns event listeners to the player form radio buttons
-    function assignRadioEvents() {
+    // _assignRadioEvents function - assigns event listeners to the player form radio buttons
+    function _assignRadioEvents() {
         const radioButtons = document.querySelectorAll('input[type="radio"]');
         radioButtons.forEach(button => {
-            button.addEventListener('click', handleRadioClick);
+            button.addEventListener('click', _handleRadioClick);
         });
     }
 
-    // assignStartButtonEvent function - assigns start button event listener
-    function assignStartButtonEvent() {
+    // _assignStartButtonEvent function - assigns start button event listener
+    function _assignStartButtonEvent() {
         const startButton = document.querySelector('#start-reset');
-        startButton.addEventListener('click', handleStartClick);
+        startButton.addEventListener('click', _handleStartClick);
     }
 
-    // assignResetButtonEvent function - removes previous start button event listener and assigns the reset button event listener
-    function assignResetButtonEvent() {
+    // _assignResetButtonEvent function - removes previous start button event listener and assigns the reset button event listener
+    function _assignResetButtonEvent() {
         // Remove existing start button event listener
         const button = document.querySelector('#start-reset');
-        button.removeEventListener('click', handleStartClick);
+        button.removeEventListener('click', _handleStartClick);
     
         // Add reset button event listener
-        button.addEventListener('click', handleResetClick);
+        button.addEventListener('click', _handleResetClick);
     }
 
     // assignInitial function - Wrapper function for initial page load event assignment
     function assignInitial() {
-        assignRadioEvents();
-        assignStartButtonEvent();
+        _assignRadioEvents();
+        _assignStartButtonEvent();
     }
 
     // assignGameStart function - Wrapper function for game start event assignment
     function assignGameStart() {
-        assignBoardEvents();
-        assignResetButtonEvent();
+        _assignBoardEvents();
+        _assignResetButtonEvent();
     }
 
     // assignEnd function - Wrapper function for game end event assignment
     function assignGameEnd() {
-        removeBoardEvents();
+        _removeBoardEvents();
     }
 
     return {
@@ -325,7 +325,7 @@ const events = (function() {
     };
 })();
 
-// game module - contains logic related to the flow of the game
+// game module - contains logic related to the flow of the game. This acts as the "driver" module that combines logic from other modules
 const game = (function() {
     const _players = {};
     let _activePlayer;
@@ -395,8 +395,8 @@ const game = (function() {
         game.start();
     }
 
-    // getOutcome function - returns text representing the outcome of the game
-    function getOutcome(hasWinner) {
+    // _getOutcome function - returns text representing the outcome of the game
+    function _getOutcome(hasWinner) {
         let outcome;
         // Tie game if winner is null
         if (!hasWinner) {
@@ -431,7 +431,7 @@ const game = (function() {
         events.assignGameEnd();
 
         // Display the game outcome
-        const outcome = getOutcome(hasWinner);
+        const outcome = _getOutcome(hasWinner);
         displayController.displayOutcome(outcome);
     }
 
